@@ -22,10 +22,10 @@
     - network-interfaces-all-interfaces
 
 - name: list network interfaces
-  command: "find {{ network_interfaces_interface_path }} -type f"
+  command: find {{ network_interfaces_interface_path }} -type f
   changed_when: false
   when: network_interfaces_interfaces | length > 0
-  register: network_interfaces_existing_files
+  register: _network_interfaces_existing_files
   tags:
     - configuration
     - network-interfaces
@@ -35,8 +35,8 @@
   template:
     src: etc/network/interfaces.d/device.j2
     dest: "{{ network_interfaces_interface_path }}/device-{{ item.device }}-{{ item.family | default('inet') }}"
-  with_items: network_interfaces_interfaces
-  register: network_interfaces_configuration_result
+  with_items: "{{ network_interfaces_interfaces }}"
+  register: _network_interfaces_configuration_result
   tags:
     - configuration
     - network-interfaces
@@ -45,9 +45,8 @@
 - name: configured files
   set_fact:
     network_interfaces_configured_files: >
-      [{% for item in network_interfaces_configuration_result.results | default([]) -%}
-        u"{{ item.dest | default(item.path) }}"
-        {{ '' if loop.last else ',' }}
+      [{% for item in _network_interfaces_configuration_result.results | default([]) -%}
+      {{ item.dest | default(item.path) | string }}{{ '' if loop.last else ',' }}
       {%- endfor %}]
   tags:
     - configuration
@@ -58,10 +57,8 @@
   file:
     path: "{{ item }}"
     state: absent
-  when: >
-    network_interfaces_manage_devices
-    and (item not in network_interfaces_configured_files)
-  with_items: network_interfaces_existing_files.stdout_lines | default([])
+  when: network_interfaces_manage_devices and (item not in network_interfaces_configured_files)
+  with_items: "{{ _network_interfaces_existing_files.stdout_lines | default([]) }}"
   tags:
     - configuration
     - network-interfaces
@@ -71,13 +68,9 @@
   service:
     name: "{{ network_interfaces_service }}"
     state: restarted
-    arguments: "INTERFACE={{ item.0 }}"
-  when: >
-    (0 != item.1 | selectattr('changed') | list | length)
-    and ((0 != item.1 | selectattr('item.auto', 'undefined') | list | length)
-      or (true in item.1 | selectattr('item.auto') | list)
-    )
-  with_items: network_interfaces_configuration_result.results | default([]) | groupby('item.device')
+    arguments: "INTERFACE={{ item.item.device }}"
+  when: item.changed and item.item.auto | default(true)
+  with_items: "{{ _network_interfaces_configuration_result.results | default([]) }}"
   tags:
     - configuration
     - network-interfaces

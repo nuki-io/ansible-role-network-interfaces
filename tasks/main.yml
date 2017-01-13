@@ -68,11 +68,9 @@
   service:
     name: "{{ network_interfaces_service }}"
     state: restarted
-    arguments: "INTERFACE={{ item.0 }}"
-  when: >
-    (0 != item.1 | selectattr('changed') | list | length)
-    and ((0 != item.1 | selectattr('item.auto', 'undefined') | list | length) or (true in item.1 | selectattr('item.auto') | list))
-  with_items: "{{ _network_interfaces_configuration_result.results | default([]) | groupby('item.device') }}"
+    arguments: "INTERFACE={{ item.item.device }}"
+  when: item.changed and item.item.auto | default(true)
+  with_items: "{{ _network_interfaces_configuration_result.results | default([]) }}"
   tags:
     - configuration
     - network-interfaces

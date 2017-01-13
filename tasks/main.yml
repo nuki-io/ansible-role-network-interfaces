@@ -22,7 +22,7 @@
     - network-interfaces-all-interfaces
 
 - name: list network interfaces
-  command: "find {{ network_interfaces_interface_path }} -type f"
+  command: find {{ network_interfaces_interface_path }} -type f
   changed_when: false
   when: network_interfaces_interfaces | length > 0
   register: _network_interfaces_existing_files
@@ -46,7 +46,7 @@
   set_fact:
     network_interfaces_configured_files: >
       [{% for item in _network_interfaces_configuration_result.results | default([]) -%}
-      u"{{ item.dest | default(item.path) }}"{{ '' if loop.last else ',' }}
+      {{ item.dest | default(item.path) | string }}{{ '' if loop.last else ',' }}
       {%- endfor %}]
   tags:
     - configuration
@@ -57,9 +57,7 @@
   file:
     path: "{{ item }}"
     state: absent
-  when: >
-    network_interfaces_manage_devices
-    and (item not in network_interfaces_configured_files)
+  when: network_interfaces_manage_devices and (item not in network_interfaces_configured_files)
   with_items: "{{ _network_interfaces_existing_files.stdout_lines | default([]) }}"
   tags:
     - configuration

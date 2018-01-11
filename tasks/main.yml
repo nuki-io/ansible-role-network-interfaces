@@ -65,10 +65,10 @@
     - network-interfaces-remove-configurations
 
 - name: restart devices
-  service:
-    name: "{{ network_interfaces_service }}"
-    state: restarted
-    arguments: "INTERFACE={{ item.item.device }}"
+  shell: >
+    [ -n "$(ifquery --list --exclude=lo)" ] && udevadm settle
+    && ip addr flush {{ item.item.device }}
+    && (ifdown {{ item.item.device }} --exclude=lo || true) && ifup {{ item.item.device }} --exclude=lo
   when: item.changed and item.item.auto | default(true)
   with_items: "{{ _network_interfaces_configuration_result.results | default([]) }}"
   tags:

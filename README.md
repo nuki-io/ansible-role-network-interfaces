@@ -1,6 +1,7 @@
 ## network-interfaces
 
-[![Build Status](https://travis-ci.org/Oefenweb/ansible-network-interfaces.svg?branch=master)](https://travis-ci.org/Oefenweb/ansible-network-interfaces) [![Ansible Galaxy](http://img.shields.io/badge/ansible--galaxy-network--interfaces-blue.svg)](https://galaxy.ansible.com/Oefenweb/network-interfaces)
+[![Build Status](https://travis-ci.org/Oefenweb/ansible-network-interfaces.svg?branch=master)](https://travis-ci.org/Oefenweb/ansible-network-interfaces)
+[![Ansible Galaxy](http://img.shields.io/badge/ansible--galaxy-network--interfaces-blue.svg)](https://galaxy.ansible.com/Oefenweb/network-interfaces)
 
 Manage network interfaces in Debian-like systems.
 
@@ -37,7 +38,7 @@ None
 * `network_interfaces_interfaces.{n}.bridge.stp`: [optional]: Turn spanning tree protocol on/off
 * `network_interfaces_interfaces.{n}.bridge.fd`: [optional]: Bridge forward delay
 * `network_interfaces_interfaces.{n}.bridge.maxwait`: [optional]: Maximum time to wait for the bridge ports to get to the forwarding status
-* `network_interfaces_interfaces.{n}.bridge.waitport`: [optional]: Maximum time to wait for the specified ports to become available 
+* `network_interfaces_interfaces.{n}.bridge.waitport`: [optional]: Maximum time to wait for the specified ports to become available
 
 ##### Inline hook scripts
 

@@ -1,40 +1,41 @@
 # tasks file for network-interfaces
 ---
-- name: create directory
-  file:
-    path: "{{ network_interfaces_interface_path }}"
-    state: directory
-  when: network_interfaces_interfaces | length > 0
-  tags:
-    - configuration
-    - network-interfaces
-    - network-interfaces-create-directory
+- block:
 
-- name: all interfaces
-  template:
-    src: etc/network/interfaces.j2
-    dest: "{{ network_interfaces_all_interfaces_path }}"
-  notify: restart network-interfaces
-  when: network_interfaces_interfaces | length > 0
-  tags:
-    - configuration
-    - network-interfaces
-    - network-interfaces-all-interfaces
+  - name: create directory
+    file:
+      path: "{{ network_interfaces_interface_path }}"
+      state: directory
+    tags:
+      - network-interfaces-create-directory
 
-- name: list network interfaces
-  command: find {{ network_interfaces_interface_path }} -type f
-  changed_when: false
+  - name: all interfaces
+    template:
+      src: etc/network/interfaces.j2
+      dest: "{{ network_interfaces_all_interfaces_path }}"
+      mode: 0644
+    notify: restart network-interfaces
+    tags:
+      - network-interfaces-all-interfaces
+
+  - name: list network interfaces
+    command: >
+      find {{ network_interfaces_interface_path }} -type f
+    changed_when: false
+    register: _network_interfaces_existing_files
+    tags:
+      - network-interfaces-list-network-interfaces
+
   when: network_interfaces_interfaces | length > 0
-  register: _network_interfaces_existing_files
   tags:
     - configuration
     - network-interfaces
-    - network-interfaces-list-network-interfaces
 
 - name: configurations
   template:
     src: etc/network/interfaces.d/device.j2
     dest: "{{ network_interfaces_interface_path }}/device-{{ item.device }}-{{ item.family | default('inet') }}"
+    mode: 0644
   with_items: "{{ network_interfaces_interfaces }}"
   register: _network_interfaces_configuration_result
   tags:
@@ -57,7 +58,9 @@
   file:
     path: "{{ item }}"
     state: absent
-  when: network_interfaces_manage_devices and (item not in network_interfaces_configured_files)
+  when:
+    - network_interfaces_manage_devices
+    - item not in network_interfaces_configured_files
   with_items: "{{ _network_interfaces_existing_files.stdout_lines | default([]) }}"
   tags:
     - configuration
@@ -69,7 +72,9 @@
     [ -n "$(ifquery --list --exclude=lo)" ] && udevadm settle
     && ip addr flush {{ item.item.device }}
     && (ifdown {{ item.item.device }} --exclude=lo || true) && ifup {{ item.item.device }} --exclude=lo
-  when: item.changed and item.item.auto | default(true)
+  when:
+    - item.changed
+    - item.item.auto | default(true)
   with_items: "{{ _network_interfaces_configuration_result.results | default([]) }}"
   tags:
     - configuration

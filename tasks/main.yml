@@ -1,4 +1,4 @@
-# tasks file for network-interfaces
+# tasks file
 ---
 - block:
 

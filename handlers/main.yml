@@ -1,4 +1,4 @@
-# handlers file for network-interfaces
+# handlers file
 ---
 - name: restart network-interfaces
   service:

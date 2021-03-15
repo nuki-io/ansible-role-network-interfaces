@@ -1,4 +1,4 @@
-# vars file for network-interfaces
+# vars file
 ---
 network_interfaces_service: networking
 

@@ -1,4 +1,4 @@
-# test file for network-interfaces
+# test file
 ---
 - hosts: localhost
   connection: local

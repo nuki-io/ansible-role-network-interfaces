@@ -1,6 +1,7 @@
-# meta file for network-interfaces
+# meta file
 ---
 galaxy_info:
+  namespace: oefenweb
   role_name: network-interfaces
   author: Andreas Reischuck
   company: Dresden Weekly

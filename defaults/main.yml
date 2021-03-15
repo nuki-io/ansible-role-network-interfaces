@@ -1,4 +1,4 @@
-# defaults file for network-interfaces
+# defaults file
 ---
 network_interfaces_manage_devices: true
 

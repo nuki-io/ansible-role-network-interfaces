@@ -6,6 +6,7 @@
     file:
       path: "{{ network_interfaces_interface_path }}"
       state: directory
+      mode: 0644
     tags:
       - network-interfaces-create-directory
 

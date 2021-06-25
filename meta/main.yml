@@ -2,7 +2,7 @@
 ---
 galaxy_info:
   namespace: oefenweb
-  role_name: network-interfaces
+  role_name: network_interfaces
   author: Andreas Reischuck
   company: Dresden Weekly
   description: Manage network interfaces in Debian-like systems
@@ -14,14 +14,12 @@ galaxy_info:
         - precise
         - trusty
         - xenial
-        - bionic
     - name: Debian
       versions:
         - wheezy
         - jessie
         - stretch
-        - buster
   galaxy_tags:
-  - networking
-  - system
+    - networking
+    - system
 dependencies: []

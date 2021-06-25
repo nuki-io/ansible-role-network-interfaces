@@ -52,6 +52,10 @@ None
 
 None
 
+## Recommended
+
+* `netplan` ([see](https://github.com/Oefenweb/ansible-netplan))
+
 #### Example(s)
 
 ##### DigitalOcean droplet with private networking enabled

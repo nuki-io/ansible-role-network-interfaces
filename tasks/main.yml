@@ -16,6 +16,16 @@
       dest: "{{ network_interfaces_all_interfaces_path }}"
       mode: 0644
     notify: restart network-interfaces
+    when: network_interfaces_template_interfaces_file
+    tags:
+      - network-interfaces-all-interfaces
+
+  - name: ensure config directory is sourced in /etc/network/interfaces
+    ansible.builtin.lineinfile:
+      path: "{{ network_interfaces_all_interfaces_path }}"
+      line: "{{ network_interfaces_source_stanza }}"
+    notify: restart network-interfaces
+    when: not network_interfaces_template_interfaces_file
     tags:
       - network-interfaces-all-interfaces
 

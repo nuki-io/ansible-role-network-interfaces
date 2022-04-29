@@ -1,6 +1,7 @@
 # defaults file
 ---
 network_interfaces_manage_devices: true
+network_interfaces_template_interfaces_file: true
 
 network_interfaces_interfaces:
   - device: "{{ ansible_default_ipv4['interface'] }}"
@@ -11,3 +12,5 @@ network_interfaces_interfaces:
     up: []
     down: []
     post-down: []
+
+network_interfaces_source_stanza: "source {{ network_interfaces_interface_path }}/*"
